@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h2>Poll</h2>
+    <button onclick="vote('Python')">Python</button>
+    <button onclick="vote('JavaScript')">JavaScript</button>
+    <button onclick="vote('Go')">Go</button>
+
+    <div id="results"></div>
+
+    <script>
+      const socket = new WebSocket('ws://127.0.0.1:8000/ws');
+
+      function vote(option) {
+        socket.send(option);
+      }
+
+      socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        const show = document.getElementById('results');
+
+        show.innerHTML = '';
+        for (const option in message) {
+          const p = document.createElement('p');
+          p.textContent = `${option}: ${message[option]} votes`;
+          show.appendChild(p);
+        }
+      };
+    </script>
+  </body>
+</html>
